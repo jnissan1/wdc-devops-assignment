@@ -1,0 +1,16 @@
+terraform {
+  backend "s3" {
+    bucket = "YOUR_S3_BUCKET"
+    key    = "remote.tfstate"
+    region = "YOUR REGION"
+  }
+}
+
+provider "aws" {
+  region = var.region
+  default_tags {
+    tags = {
+      env = "${var.env_name}"
+    }
+  }
+}
