@@ -44,3 +44,9 @@ variable "public_access_cidrs" {
   description = "publicAccessCIDRs for cluster controlplane api"
 
 }
+
+variable "github_secret_name" {
+  type        = string
+  default     = ""
+  description = "AWS Secrets Manager github credentials secret name"
+}

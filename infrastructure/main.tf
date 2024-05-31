@@ -17,6 +17,7 @@ module "eks-resources" {
   vpc_cidr               = aws_vpc.this_vpc.cidr_block
   subnetids_listA        = local.subnet_ids_listA
   subnet_ids_listPrivate = local.subnet_ids_stringPrivate
-  cluster_users       = var.cluster_users
-  public_access_cidrs = var.public_access_cidrs
+  cluster_users          = var.cluster_users
+  public_access_cidrs    = var.public_access_cidrs
+  github_secret_name     = var.github_secret_name
 }

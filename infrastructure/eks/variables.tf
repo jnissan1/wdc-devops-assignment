@@ -48,3 +48,8 @@ variable "cluster_users" {
   type = list(string)
 }
 
+variable github_secret_name {
+  type        = string
+  default     = ""
+  description = "AWS Secrets Manager github credentials secret name"
+}

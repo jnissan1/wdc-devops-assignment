@@ -10,7 +10,7 @@ on:
 
 jobs:
   Demo_CI:
-    runs-on: my-cool-custom-scaleset
+    runs-on: arc-runner-set
     
     steps:
       - uses: actions/checkout@v4
