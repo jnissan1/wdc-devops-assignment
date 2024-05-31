@@ -26,9 +26,7 @@ class PodExposer(Base):
     #    print(self.pod_name)
     #    print(f"inside def run")
         if self.pod_name is not None:
-            print(f"pod_name is not None")
             print(self.pod_name)
-            return self.pod_name
         else:
             raise Exception("Failed to get the runner pod's name.")
 
