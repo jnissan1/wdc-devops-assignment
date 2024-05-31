@@ -6,6 +6,7 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../../.
 
 from base import Base
 
+
 class ChuckNorris(Base):
     """
     This class inherits from Base class.
@@ -14,9 +15,10 @@ class ChuckNorris(Base):
 
     def __init__(self):
         super().__init__()
+        self.chuck_api_url = os.getenv('CHUCK_API', 'https://api.chucknorris.io/jokes/random')
 
     def add_arguments(self):
-        self.parser.add_argument("--url", dest="url", help="url to Chuck Norris API URL", default=None)
+        self.parser.add_argument("--url", dest="url", help="url to Chuck Norris API URL", default=self.chuck_api_url)
 
     def prepare(self):
         pass
