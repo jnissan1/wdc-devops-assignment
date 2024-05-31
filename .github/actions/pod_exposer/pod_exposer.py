@@ -13,6 +13,7 @@ class PodExposer(Base):
 
     def __init__(self):
         super().__init__()
+        print(os.environ)
 
     def add_arguments(self):
         pass
@@ -21,7 +22,7 @@ class PodExposer(Base):
         pass
 
     def run(self):
-        pod_name = os.environ.get("POD_NAME")
+        pod_name = os.environ["HOSTNAME"]
         if pod_name is not None:
             print(pod_name)
         else:
@@ -34,7 +35,7 @@ class PodExposer(Base):
         pass
 
 if __name__ == '__main__':
-   try:
+    try:
         sys.exit(PodExposer().execute())
     except Exception as e:
         print(f"An error occurred: {e}")
