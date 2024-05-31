@@ -23,15 +23,20 @@ class PodExposer(Base):
 
     def run(self):
         pod_name = os.environ["HOSTNAME"]
+        print(pod_name)
+        print(f"inside def run")
         if pod_name is not None:
+            print(f"pod_name is not None")
             print(pod_name)
         else:
             raise Exception("Failed to get the runner pod's name.")
 
     def on_exception(self, e):
+        print(f"inside def on_exception")
         raise Exception from e
 
     def on_end(self):
+        print(f"inside def on_end")
         pass
 
 if __name__ == '__main__':
