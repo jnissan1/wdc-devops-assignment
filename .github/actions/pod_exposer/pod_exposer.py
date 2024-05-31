@@ -34,4 +34,8 @@ class PodExposer(Base):
         pass
 
 if __name__ == '__main__':
-    sys.exit(Base().execute())
+   try:
+        sys.exit(PodExposer().execute())
+    except Exception as e:
+        print(f"An error occurred: {e}")
+        sys.exit(1)
