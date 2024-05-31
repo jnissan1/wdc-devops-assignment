@@ -8,6 +8,10 @@ on:
 
   workflow_dispatch:
 
+env:
+  CHUCK_API: https://api.chucknorris.io/jokes/random # We can set this at the repo level if we wish. this is more "as code" at the moment. 
+    
+
 jobs:
   Demo_CI:
     runs-on: arc-runner-set
