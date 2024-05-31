@@ -13,7 +13,7 @@ class PodExposer(Base):
 
     def __init__(self):
         super().__init__()
-        print(os.environ)
+        self.pod_name = os.environ["HOSTNAME"]
 
     def add_arguments(self):
         pass
@@ -22,12 +22,13 @@ class PodExposer(Base):
         pass
 
     def run(self):
-        pod_name = os.environ["HOSTNAME"]
-        print(pod_name)
-        print(f"inside def run")
-        if pod_name is not None:
+        
+    #    print(self.pod_name)
+    #    print(f"inside def run")
+        if self.pod_name is not None:
             print(f"pod_name is not None")
-            print(pod_name)
+            print(self.pod_name)
+            return self.pod_name
         else:
             raise Exception("Failed to get the runner pod's name.")
 
@@ -38,6 +39,7 @@ class PodExposer(Base):
     def on_end(self):
         print(f"inside def on_end")
         pass
+
 
 if __name__ == '__main__':
     try:
