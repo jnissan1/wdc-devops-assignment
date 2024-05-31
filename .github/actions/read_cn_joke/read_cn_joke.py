@@ -1,6 +1,8 @@
 import os
 import sys
 import requests
+import argparse
+
 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../../..')))
 
@@ -15,10 +17,18 @@ class ChuckNorris(Base):
 
     def __init__(self):
         super().__init__()
+        self.parser = argparse.ArgumentParser(description="Fetch a Chuck Norris joke from the provided API URL.")
         self.chuck_api_url = os.getenv('CHUCK_API', 'https://api.chucknorris.io/jokes/random')
+        #print(os.environ)
+
+        
 
     def add_arguments(self):
-        self.parser.add_argument("--url", dest="url", help="url to Chuck Norris API URL", default=self.chuck_api_url)
+        #print(os.environ)
+
+        self.parser.add_argument("--url", dest="url", help="url to Chuck Norris API URL", default=self.chuck_api_url, required=True)
+        self.args = self.parser.parse_args()
+
 
     def prepare(self):
         pass
