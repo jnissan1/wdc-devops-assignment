@@ -1,5 +1,7 @@
 import os
 import sys
+import argparse
+
 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../../..')))
 
@@ -13,12 +15,15 @@ class PodExposer(Base):
 
     def __init__(self):
         super().__init__()
-        self.pod_name = os.environ["HOSTNAME"]
-
+        
     def add_arguments(self):
+        self.parser = argparse.ArgumentParser(description="Env Var to expose")
+        self.parser.add_argument("--envexposer", dest="envexposer", help="Env Var to expose", required=True)
         pass
 
     def prepare(self):
+        self.args = self.parser.parse_args()
+        self.pod_name = os.environ[self.args.envexposer]
         pass
 
     def run(self):
