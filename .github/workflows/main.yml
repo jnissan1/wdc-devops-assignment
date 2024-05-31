@@ -10,7 +10,7 @@ on:
 
 env:
   CHUCK_API: https://api.chucknorris.io/jokes/random # We can set this at the repo level if we wish. this is more "as code" at the moment. 
-  ENV_EXPORTER: HOSTNAME
+  ENV_EXPORTER: CHUCK_API
     
 
 jobs:
