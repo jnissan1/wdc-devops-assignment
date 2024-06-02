@@ -62,10 +62,14 @@ PUBLIC_ACCESS_CIDRS=$(curl -s ipv4.icanhazip.com)
 # Prompt user for GitHub username
 read -p "Enter your GitHub username: " GITHUB_USERNAME
 
-
+echo " "
+echo " "
 # Prompt user for GitHub password (hidden input)
 read -sp "Enter your GitHub password: " GITHUB_PASSWORD
 echo
+
+echo " "
+echo " "
 
 GITHUB_URL=$(git config --get remote.origin.url | sed -E 's|git@github.com:(.*)/(.*)\.git|https://github.com/\1/\2|')
 read -p "Found GitHub URL '$GITHUB_URL'. Is this correct? (y/n): " url_confirm
@@ -74,7 +78,8 @@ if [ "$url_confirm" != "y" ]; then
 fi
 
 
-
+echo " "
+echo " "
 echo "Enter the AWS SecretsManager secret name for GitHub information."
 echo "The script will create the secret if it does not exist."
 read -p "AWS SecretsManager secret name: " AWS_SM_NAME
@@ -90,10 +95,17 @@ Remove sensetive values from variables
 unset GITHUB_PASSWORD
 unset GITHUB_USERNAME
 
+# Prompt user for Cluster Name
+read -p "Please select a cluster name, only dash allowed as secial charectehrs: " CLUSTER_NAME
+
+
 # Prompt user for S3 bucket name for Terraform backend
 attempts=0
 max_attempts=3
 GITHUB_PATH=$(echo "$GITHUB_URL" | sed -E 's|https://github.com/(.*)/(.*)|\1/\2|')
+echo " "
+echo " "
+echo "S3 Configuration"
 while [ $attempts -lt $max_attempts ]; do
     # S3 bucket names are uniq, added retry mechanism 
     echo "Enter the S3 bucket name for Terraform backend."
@@ -167,6 +179,7 @@ sed -i ''  "s|{{AWS_SM_NAME}}|$AWS_SM_NAME|g" "$OUTPUT_FILE"
 sed -i ''  "s|{{AWS_REGION}}|$AWS_REGION|g" "$OUTPUT_FILE"
 sed -i ''  "s|{{PUBLIC_ACCESS_CIDRS}}|$PUBLIC_ACCESS_CIDRS|g" "$OUTPUT_FILE"
 sed -i ''  "s|{{USER_ARN}}|$USER_ARN|g" "$OUTPUT_FILE"
+sed -i ''  "s|{{CLUSTER_NAME}}|$CLUSTER_NAME|g" "$OUTPUT_FILE"
 
 echo "Variables have been applied to '$OUTPUT_FILE'."
 
@@ -176,12 +189,19 @@ terraform init -reconfigure \
 		-backend-config="bucket=$S3_BUCKET_NAME" \
 		-backend-config="region=$AWS_REGION" \
 		-backend-config="key=$GITHUB_PATH/remote.tf"
+
+#There's a bug in the action-runner-set helm uninstall process,
+#it keeps leftover resources and is unalbe to remote it from the terraform resource.  
+#To address this at this time, we first need to remove it's resrouce with `-target` by itself and then remove all other resources.
+
 if [[ $terraform_args == *"destroy"* ]]; then
     echo "destroying"
     terraform $terraform_args -var-file=env.tfvars -target module.eks-resources.helm_release.actions-runner-set
     terraform $terraform_args \
         -var-file=env.tfvars
-    aws logs delete-log-group --log-group-name /aws/eks/$CLUSTER_NAME/cluster
-
+    aws logs delete-log-group --log-group-name /aws/eks/$CLUSTER_NAME/cluster || true
+    else
+    terraform $terraform_args \
+        -var-file=env.tfvars
 fi
 

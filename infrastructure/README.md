@@ -25,6 +25,7 @@ The script will ask you for releant information -
     **_NOTE:_** The GitHub credentials are consumed as `helm login` for `oci://ghcr.io/` and as a `github` listener token for the ARC runner. 
 2. AWS -
     * AWS_SM_NAME - AWS Secrets Manager secret name. The script will create one if not preasent and makes sure the relevant information is there.
+    * CLUSTER_NAME - the AWS EKS cluster name you wish to create. Used in tags and such.
     * S3_BUCKET_NAME - The S3 bucket name for the terraform backend. 
     * AWS_REGION - if a region is found, you will be prompt for confirmation\region change.
 
@@ -38,16 +39,7 @@ You can edit `env.tfvars.template` and add additional access information -
 
 ## Cleanup -
 
-There's a bug in the action-runner-set helm uninstall process, it keeps leftover resources and is unalbe to remote it from the terraform resource.  
-To address this at this time, we first need to remove it's resrouce with `-target` by itself and then remove all other resources.
 
-```
-terraform destroy -var-file=env.tfvars -target module.eks-resources.helm_release.actions-runner-set
-terraform destroy -var-file=env.tfvars
-CLUSTER_NAME="$(cat env.tfvars | grep cluster_name | awk -F\" '{ print $2}')"
-aws logs delete-log-group --log-group-name /aws/eks/$CLUSTER_NAME/cluster
-```
-Or just run - 
 ```
 ./deploy-infrastructure.sh destroy
 ```

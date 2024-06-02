@@ -2,7 +2,7 @@ resource "aws_vpc" "this_vpc" {
   cidr_block           = var.cidr
   enable_dns_hostnames = true
   enable_dns_support   = true
-  tags                 = { Name = "${var.env_name}-VPC", env = "${var.cluster_name}" }
+  tags                 = { Name = "${var.cluster_name}-VPC", env = "${var.cluster_name}" }
 }
 
 resource "aws_internet_gateway" "this_ig" {
