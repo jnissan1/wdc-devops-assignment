@@ -15,7 +15,7 @@ GITHUB_URL = The script will search for the current git repo and prompt for conf
 
 ## Initial Infrastructure deployment
 
-In order to prepare the `env.tfvars` file run the `./deploy-infrastructure.sh <tf-command>` and input relvant information when prompted. example - `./deploy-infrastructure.sh plan` or `./deploy-infrastructure.sh destroy`. if argument is provided, apply is assumed. 
+In order to prepare the `env.tfvars` and deploy everything. use `./deploy-infrastructure.sh <tf-command>` and input relvant information when prompted. example - `./deploy-infrastructure.sh plan`, `./deploy-infrastructure.sh apply -auto-approve`,  `./deploy-infrastructure.sh destroy`. if argument is provided, apply is assumed. 
 The script will ask you for releant information - 
 1. Git - 
     * `GITHUB_USERNAME` - The GitHub username associated with the api key
@@ -29,7 +29,6 @@ The script will ask you for releant information -
     * S3_BUCKET_NAME - The S3 bucket name for the terraform backend. 
     * AWS_REGION - if a region is found, you will be prompt for confirmation\region change.
 
-After the initial infrastructure deployment, if you want, you can run `terraform apply -var-file=env.tfvars` or ` terraform destroy -var-file=env.tfvars` normally inside the Infrastructure folder. 
 
 ## Additional configurations  
 You can edit `env.tfvars.template` and add additional access information -   

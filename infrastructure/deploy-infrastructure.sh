@@ -47,6 +47,26 @@ ensure_secret_keys() {
 }
 
 
+printsuccess() {
+echo "Terraform Script completed, save the information below if you want to apply changes without running this script again -"
+echo """Terraform Command:
+terraform fmt && terraform validate
+terraform init -reconfigure -backend-config=\"bucket=$S3_BUCKET_NAME\" -backend-config=\"region=$AWS_REGION\" -backend-config=\"key=$GITHUB_PATH/remote.tf\"
+
+Then to apply -
+terraform $terraform_args \
+        -var-file=env.tfvars
+
+Or to destroy - 
+terraform $terraform_args -var-file=env.tfvars -target module.eks-resources.helm_release.actions-runner-set
+terraform $terraform_args -var-file=env.tfvars
+aws logs delete-log-group --log-group-name /aws/eks/$CLUSTER_NAME/cluster || true
+"""
+}
+
+
+
+
 
 ###### START HERE ######
 
@@ -203,5 +223,7 @@ if [[ $terraform_args == *"destroy"* ]]; then
     else
     terraform $terraform_args \
         -var-file=env.tfvars
+    printsuccess()
 fi
+
 
