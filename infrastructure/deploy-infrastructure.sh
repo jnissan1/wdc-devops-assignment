@@ -61,7 +61,11 @@ Or to destroy -
 terraform $terraform_args -var-file=env.tfvars -target module.eks-resources.helm_release.actions-runner-set
 terraform $terraform_args -var-file=env.tfvars
 aws logs delete-log-group --log-group-name /aws/eks/$CLUSTER_NAME/cluster || true
+
+In order to control the newly created EKS cluster, run the following - 
+aws eks update-kubeconfig --name $CLUSTER_NAME
 """
+
 }
 
 
@@ -85,7 +89,7 @@ read -p "Enter your GitHub username: " GITHUB_USERNAME
 echo " "
 echo " "
 # Prompt user for GitHub password (hidden input)
-read -sp "Enter your GitHub password: " GITHUB_PASSWORD
+read -sp "Enter your GitHub password (hidden input): " GITHUB_PASSWORD
 echo
 
 echo " "
@@ -111,10 +115,12 @@ secret_value=$(jq -n --arg GITHUB_USERNAME "$GITHUB_USERNAME" --arg GITHUB_PASSW
 }')
 ensure_secret_keys "$AWS_SM_NAME" "$secret_value"
 
-Remove sensetive values from variables
+#Remove sensetive values from variables
 unset GITHUB_PASSWORD
 unset GITHUB_USERNAME
 
+echo " "
+echo " "
 # Prompt user for Cluster Name
 read -p "Please select a cluster name, only dash allowed as secial charectehrs: " CLUSTER_NAME
 
@@ -216,14 +222,14 @@ terraform init -reconfigure \
 
 if [[ $terraform_args == *"destroy"* ]]; then
     echo "destroying"
-    terraform $terraform_args -var-file=env.tfvars -target module.eks-resources.helm_release.actions-runner-set
-    terraform $terraform_args \
+    terraform apply -destroy -auto-approve -var-file=env.tfvars -target module.eks-resources.helm_release.actions-runner-set
+    terraform apply -destroy -auto-approve \
         -var-file=env.tfvars
     aws logs delete-log-group --log-group-name /aws/eks/$CLUSTER_NAME/cluster || true
     else
     terraform $terraform_args \
         -var-file=env.tfvars
-    printsuccess()
+    printsuccess
 fi
 
 
