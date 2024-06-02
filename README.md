@@ -1,3 +1,6 @@
+# Assignment Completion Documentation  
+located here - [infrastructure/README.md](infrastructure/README.md)
+
 # Home Assignment - DevOps Engineer at Western Digital
 
 Congratulations! You are now at the technical assignment stage of the interview process at Western Digital. The goal of this stage is simulate the day-to-day tasks you might be working on as a DevOps Engineer. We welcome all applicants to complete this home assignment, regardless of their past experience with specific tools, programming languages, SDK's and cloud providers. Our goal as a hiring team at Western Digital is to assess your understanding of relevant concepts and provide you, the candidate, the opportunity to showcase your skills and thought process. 
