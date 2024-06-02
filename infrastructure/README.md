@@ -1,6 +1,8 @@
 # Terraform Infrastructure  
   
-The current folder contains the relevant script and tf files to deploy a fully working and connected GitHub ARC Runner on an EKS cluster with private subnets, routing,  NATGateways.
+The current folder contains the relevant script and tf files to deploy a fully working and connected GitHub ARC Runner on an EKS cluster with private subnets, routing,  NATGateways.  
+
+Estimated deployment time from scratch - ~17m 
 
 ## Preperation  
 
