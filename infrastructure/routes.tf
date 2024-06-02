@@ -60,7 +60,7 @@ resource "aws_route_table_association" "private" {
   depends_on = [
     data.aws_route_tables.PrivateRT
   ]
-  subnet_id = element(data.aws_subnet.azs.*.id, count.index)
+  subnet_id = element(aws_subnet.private.*.id, count.index)
   # The ID of the routing table to associate with.
   route_table_id = aws_route_table.PrivateRT[count.index].id
 }
@@ -71,7 +71,7 @@ resource "aws_route_table_association" "public" {
   depends_on = [
     aws_route_table.PublicRT
   ]
-  subnet_id = element(data.aws_subnet.azs_public_dest.*.id, count.index)
+  subnet_id = element(aws_subnet.public.*.id, count.index)
   # The ID of the routing table to associate with.
   route_table_id = aws_route_table.PublicRT[count.index].id
 }

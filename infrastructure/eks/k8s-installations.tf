@@ -5,17 +5,14 @@ resource "helm_release" "secrets-store-csi-driver" {
   version    = "1.3.4"
   namespace  = "kube-system"
   timeout    = 10 * 60
+  depends_on = [ 
+      module.eks
+  ]
 
-#  values = [
-#    <<VALUES
-#    syncSecret:
-#      enabled: true   # Install RBAC roles and bindings required for K8S Secrets syncing if true (default: false)
-#VALUES
      set {
        name  = "syncSecret.enabled"
        value = true
      }
-  #]
 }
 
 data "kubectl_path_documents" "aws-secrets-manager" {
@@ -26,7 +23,7 @@ resource "kubectl_manifest" "aws-secrets-manager" {
   for_each  = data.kubectl_path_documents.aws-secrets-manager.manifests
   yaml_body = each.value
   depends_on = [ 
-      helm_release.secrets-store-csi-driver
+      module.eks
   ]
 }
 
@@ -48,5 +45,7 @@ resource "helm_release" "cert-manager" {
     name  = "prometheus.enabled"
     value = "false"
   }
-
+  depends_on = [ 
+      module.eks
+  ]
 }

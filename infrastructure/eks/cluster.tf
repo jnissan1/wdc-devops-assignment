@@ -56,8 +56,8 @@ module "eks" {
 
   vpc_id = var.vpc_id
   
-  subnet_ids               = split(",", var.subnet_ids_listPrivate) 
-  control_plane_subnet_ids = split(",", var.subnet_ids_listPrivate)
+  subnet_ids               = var.subnet_ids_listPrivate
+  control_plane_subnet_ids = var.subnet_ids_listPrivate
   eks_managed_node_group_defaults = {
     iam_role_additional_policies = {
       AmazonEC2ContainerRegistryReadOnly = "arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly"
@@ -117,15 +117,14 @@ module "eks" {
     tags = local.tags
 }
 
-resource "aws_eks_identity_provider_config" "oidc" {
-  cluster_name = module.eks.cluster_name
-
-  oidc {
-    client_id                     = module.eks.oidc_provider_arn
-    identity_provider_config_name = "${var.cluster_name}-oidcconf"
-    issuer_url                    = module.eks.cluster_oidc_issuer_url
-  }
-}
+#resource "aws_eks_identity_provider_config" "oidc" {
+#  cluster_name = module.eks.cluster_name
+#  oidc {
+#    client_id                     = module.eks.oidc_provider_arn
+#    identity_provider_config_name = "${var.cluster_name}-oidcconf"
+#    issuer_url                    = module.eks.cluster_oidc_issuer_url
+#  }
+#}
 
 resource "aws_kms_key" "eks" {
   description             = "EKS ${var.cluster_name} Encryption Key"

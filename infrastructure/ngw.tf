@@ -21,25 +21,11 @@ locals {
 }
 
 
-data "aws_subnet" "azs_public_dest" {
-  count = length(aws_subnet.public)
-  depends_on = [
-    aws_subnet.private, aws_subnet.public
-  ]
-  tags = {
-    "kubernetes.io/cluster/${var.cluster_name}" = "owned"
-    "kubernetes.io/role/elb"                    = "1"
-    env                                         = "${var.cluster_name}"
-    Name                                        = "PublicSubnet-${var.cluster_name}-*"
-  }
-  #id = local.subnet_ids_listA[count.index] 
-  id = element(tolist(data.aws_subnets.destination.ids), count.index)
-}
 
 
 resource "aws_nat_gateway" "ngw" {
   count         = length(data.aws_eip.by_filter[*])
-  subnet_id     = element(data.aws_subnet.azs_public_dest.*.id, count.index)
+  subnet_id     = element(aws_subnet.public.*.id, count.index)
   allocation_id = element(data.aws_eip.by_filter.*.id, count.index)
   tags = {
     Name = "NatGateway-${var.cluster_name}-${data.aws_availability_zones.available.names[count.index]}"
@@ -80,29 +66,6 @@ data "aws_subnets" "private" {
 locals {
   subnet_ids_stringPrivate = join(",", data.aws_subnets.private.ids)
   subnet_ids_listPrivate   = split(",", local.subnet_ids_stringPrivate)
-}
-
-data "aws_subnets" "internal" {
-  filter {
-    name   = "vpc-id"
-    values = [aws_vpc.this_vpc.id]
-  }
-  filter {
-    name   = "tag:Name"
-    values = ["${var.cluster_name}-k8s-internal-*"] # insert values here
-  }
-  tags = {
-    "kubernetes.io/cluster/${var.cluster_name}" = "owned"
-    #  "kubernetes.io/role/internal-elb" = "1"
-    env = "${var.cluster_name}"
-  }
-}
-
-
-locals {
-  subnet_ids_internal = join(",", data.aws_subnets.internal.ids)
-  #subnet_ids_listInternal = split(",", local.subnet_ids_internal)
-  subnet_ids_listInternal = data.aws_subnets.internal.ids
 }
 
 

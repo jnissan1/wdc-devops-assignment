@@ -9,6 +9,11 @@ variable "cluster_name" {
   default     = ""
   description = "Main Cluster Name"
 }
+variable "cluster_version" {
+  type        = string
+  default     = ""
+  description = "Main K8s Version"
+}
 
 variable "region" {
   type        = string

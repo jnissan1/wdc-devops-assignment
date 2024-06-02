@@ -33,36 +33,22 @@ resource "null_resource" "helm_login" {
 resource "helm_release" "actions-runner-controller" {
   repository_username = local.github_username
   repository_password = local.github_api_key
-  depends_on       = [module.eks.kubernetes_namespace,helm_release.cert-manager]
+  
   name             = "arc"
   repository       = "oci://ghcr.io/actions/actions-runner-controller-charts/"
   chart            = "gha-runner-scale-set-controller"
   namespace        = "arc-systems"
   create_namespace = true
-#
-#  values = [
-#    templatefile("./eks/k8s-manifests/arc-values.yaml", { secret_name = "${var.github_secret_name}" })
-#    #"${file("./eks/k8s-manifests/arc-values.yaml")}"
-#  ]
-#  set {
-#    name  = "podLabels.env"
-#    value = "${var.cluster_name}"
-#  }
-#  set {
-#      name = "authSecret.create"
-#      value = true
-#  }
-#  set {
-#      name = "authSecret.github_token"
-#      value = local.github_api_key
-#  }
+  depends_on       = [
+    module.eks,
+    helm_release.cert-manager,
+    ]
 }
 
 
 resource "helm_release" "actions-runner-set" {
   repository_username = local.github_username
   repository_password = local.github_api_key
-  depends_on       = [module.eks.kubernetes_namespace,helm_release.cert-manager]
   name             = "arc-runner-set"
   repository       = "oci://ghcr.io/actions/actions-runner-controller-charts/"
   chart            = "gha-runner-scale-set"
@@ -81,8 +67,9 @@ resource "helm_release" "actions-runner-set" {
       name = "githubConfigSecret.github_token"
       value = local.github_api_key
   }
-#  set {
-#      name = "authSecret.github_token"
-#      value = local.github_api_key
-#  }
+  depends_on       = [
+    module.eks,
+    helm_release.cert-manager,
+    helm_release.actions-runner-controller]
+
 }
