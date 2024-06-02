@@ -34,11 +34,6 @@ module "eks" {
       most_recent    = true
       resolve_conflicts_on_update = "PRESERVE"
     }
-    aws-ebs-csi-driver = {
-      most_recent    = true
-      service_account_role_arn = "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/${var.cluster_name}-ebs-csi-controller-role"
-      resolve_conflicts_on_update = "PRESERVE"
-    }
     vpc-cni = {
 
       service_account_role_arn = "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/${var.cluster_name}-eni-controller-role"
@@ -117,14 +112,7 @@ module "eks" {
     tags = local.tags
 }
 
-#resource "aws_eks_identity_provider_config" "oidc" {
-#  cluster_name = module.eks.cluster_name
-#  oidc {
-#    client_id                     = module.eks.oidc_provider_arn
-#    identity_provider_config_name = "${var.cluster_name}-oidcconf"
-#    issuer_url                    = module.eks.cluster_oidc_issuer_url
-#  }
-#}
+
 
 resource "aws_kms_key" "eks" {
   description             = "EKS ${var.cluster_name} Encryption Key"
@@ -132,108 +120,4 @@ resource "aws_kms_key" "eks" {
   enable_key_rotation     = true
 
   tags = local.tags
-}
-
-resource "aws_kms_key" "ebs" {
-  description             = "${var.cluster_name} managed key to encrypt EKS managed node group volumes"
-  deletion_window_in_days = 7
-  policy                  = data.aws_iam_policy_document.ebs.json
-}
-
-data "aws_iam_policy_document" "ebs" {
-  # Copy of default KMS policy that lets you manage it
-  statement {
-    sid       = "Enable IAM User Permissions"
-    actions   = ["kms:*"]
-    resources = ["*"]
-
-    principals {
-      type        = "AWS"
-      identifiers = ["arn:aws:iam::${data.aws_caller_identity.current.account_id}:root"]
-    }
-  }
-
-  # Required for EKS
-  statement {
-    sid = "Allow service-linked role use of the CMK"
-    actions = [
-      "kms:Encrypt",
-      "kms:Decrypt",
-      "kms:ReEncrypt*",
-      "kms:GenerateDataKey*",
-      "kms:DescribeKey"
-    ]
-    resources = ["*"]
-
-    principals {
-      type = "AWS"
-      identifiers = [
-        "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/aws-service-role/autoscaling.amazonaws.com/AWSServiceRoleForAutoScaling", # required for the ASG to manage encrypted volumes for nodes
-        module.eks.cluster_iam_role_arn,                                                                                                            # required for the cluster / persistentvolume-controller to create encrypted PVCs
-      ]
-    }
-  }
-
-  statement {
-    sid       = "Allow attachment of persistent resources"
-    actions   = ["kms:CreateGrant"]
-    resources = ["*"]
-
-    principals {
-      type = "AWS"
-      identifiers = [
-        "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/aws-service-role/autoscaling.amazonaws.com/AWSServiceRoleForAutoScaling", # required for the ASG to manage encrypted volumes for nodes
-        module.eks.cluster_iam_role_arn,                                                                                                            # required for the cluster / persistentvolume-controller to create encrypted PVCs
-      ]
-    }
-
-    condition {
-      test     = "Bool"
-      variable = "kms:GrantIsForAWSResource"
-      values   = ["true"]
-    }
-  }
-}
-
-resource "kubectl_manifest" "ebs-sc" {
-  depends_on = [
-    module.eks
-  ]
-  yaml_body = yamlencode({
-    apiVersion = "storage.k8s.io/v1"
-    kind       = "StorageClass"
-    metadata = {
-      name = "ebs-sc"
-    }
-    parameters = {
-      "csi.storage.k8s.io/fstype" = "ext4"
-      encrypted = "true"
-      type = "gp2"
-    }
-    provisioner = "ebs.csi.aws.com"
-    reclaimPolicy = "Retain"
-    volumeBindingMode = "WaitForFirstConsumer"
-  })
-}
-
-resource "kubectl_manifest" "gp3-sc" {
-  depends_on = [
-    module.eks
-  ]
-  yaml_body = yamlencode({
-    apiVersion = "storage.k8s.io/v1"
-    kind       = "StorageClass"
-    metadata = {
-      name = "gp3-sc"
-    }
-    parameters = {
-      "csi.storage.k8s.io/fstype" = "xfs"
-      allowautoiopspergbincrease: "true"
-      encrypted = "true"
-      type = "gp3"
-    }
-    provisioner = "ebs.csi.aws.com"
-    reclaimPolicy = "Retain"
-    volumeBindingMode = "WaitForFirstConsumer"
-  })
 }

@@ -2,7 +2,7 @@ data "aws_security_group" "additional" {
     id = module.eks.node_security_group_id
 }
 
-resource "aws_security_group_rule" "prod-to-prod" {
+resource "aws_security_group_rule" "https-access-from-tf-apply-source" {
   from_port = 443
   to_port = 443
   protocol = "tcp"
