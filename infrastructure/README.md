@@ -21,9 +21,9 @@ The Terraform creates everything, from the top level VPC thru AMIs, Subnets, Rou
 "Debugging, fixing and successfully executing the included CI scripts on your Kubernetes-based self-hosted runner." 
 
 ### Status  
-Fixed all python and GitHub Actions Workflow issues and output is as expected.   
+* Fixed all python and GitHub Actions Workflow issues and output is as expected.   
 
-Improved the pod_exposer action to allow setting the environment variable ("POD_NAME") as a parameter in the script, instead of keeping it hardcoded. You can set the variable name you want as an ENV variable of the `wdc-devops/.github/workflows/main.yml` and it will retreive it. 
+* Bonus: Improved the pod_exposer action to allow setting the environment variable ("POD_NAME") as a parameter in the script, instead of keeping it hardcoded. You can set the variable name you want pulled in the `ENV_EXPORTER` file at the root folder of the repo. currently configured to retreive HOSTNAME because POD_NAME is not set in my cluster.
 
 
 # Terraform Infrastructure  
