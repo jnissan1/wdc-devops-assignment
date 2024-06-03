@@ -10,7 +10,7 @@ on:
 
 env:
   CHUCK_API: https://api.chucknorris.io/jokes/random # We can set this at the repo level if we wish. this is more "as code" at the moment. 
-  ENV_EXPORTER: HOSTNAME
+  #ENV_EXPORTER: HOSTNAME
     
 
 jobs:
@@ -26,6 +26,12 @@ jobs:
       
       - run: pip install requests
       
+      - name: Set ENV_EXPORTER
+        run: |
+          VER=$(cat ENV_EXPORTER)
+          echo "ENV_EXPORTER=$VER" >> $GITHUB_ENV
+
+
       - name: Read Chuck Norris Joke
         id: read_cn_joke
         uses: ./.github/actions/read_cn_joke
@@ -35,8 +41,8 @@ jobs:
       - name: Return Pod Name
         id: get_pod_name
         uses: ./.github/actions/pod_exposer
-        with:
-          envexposer: ${{ env.ENV_EXPORTER }}
+        #with:
+        #  envexposer: ${{ env.ENV_EXPORTER }}
         
       - name: Workflow Summary
         env:
