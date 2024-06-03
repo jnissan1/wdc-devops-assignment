@@ -34,7 +34,7 @@ Estimated deployment time from scratch - ~17m
 ## Preperation  
 
 1. Needed applications - awc-cli, git, terraform, jq, kubectl, helm.
-2. An AWS account with propper permissions to provision multiple AWS resources (eks\vpc\ec2\kms\secretsManager and more...) configured via `aws configure` OR `AWS_ACCESS..` ENV Variables)
+2. An AWS account with propper permissions to provision multiple AWS resources (eks\vpc\ec2\kms\secretsManager and more...) configured via `aws configure` OR `AWS_ACCESS..` ENV Variables.
 3. The following information documented securly -
 * `GITHUB_USERNAME` = Your account github username.  
 * `GITHUB_PASSWORD` = Your account github developer key.  
@@ -46,7 +46,10 @@ Estimated deployment time from scratch - ~17m
 TL;DR? Run `./deploy-infrastructure.sh` and follow directions.
 
 Details? Here -  
-In order to prepare the `env.tfvars` and deploy everything, we run - `./deploy-infrastructure.sh <tf-command>` and input relvant information when prompted. example - `./deploy-infrastructure.sh plan`, `./deploy-infrastructure.sh apply -auto-approve`,  `./deploy-infrastructure.sh destroy`. if argument is provided, apply is assumed. 
+* In order to prepare the `env.tfvars` and deploy everything, we run - `./deploy-infrastructure.sh <tf-command>` and input relvant information when prompted.  
+* Examples - `./deploy-infrastructure.sh plan`, `./deploy-infrastructure.sh apply -auto-approve`,  `./deploy-infrastructure.sh destroy`.  
+* If no argument is provided, apply is assumed. 
+
 The script will ask you for releant information - 
 1. Git - 
     * `GITHUB_USERNAME` - The GitHub username associated with the api key
